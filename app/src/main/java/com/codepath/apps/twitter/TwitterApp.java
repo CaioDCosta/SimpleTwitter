@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.twitter;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
@@ -13,8 +13,7 @@ import com.facebook.stetho.Stetho;
  *
  *     TwitterClient client = TwitterApp.getRestClient(Context context);
  *     // use client to send requests to API
- *
- */
+ * */
 public class TwitterApp extends Application {
 
     MyDatabase myDatabase;
