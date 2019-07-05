@@ -1,5 +1,6 @@
 package com.codepath.apps.twitter.models;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
@@ -15,6 +16,7 @@ public class Tweet {
 	public int numReply;
 	public boolean favorited;
 	public boolean retweeted;
+	public String mediaUrl = null;
 
 	public Tweet() {
 	}
@@ -30,6 +32,8 @@ public class Tweet {
 		tweet.numFavorite = jsonObject.getInt("favorite_count");
 		tweet.favorited = jsonObject.getBoolean("favorited");
 		tweet.retweeted = jsonObject.getBoolean("retweeted");
+		JSONArray media = jsonObject.getJSONObject("entities").getJSONArray("media");
+		if(media.length() > 0) tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");
 		return tweet;
 	}
 }

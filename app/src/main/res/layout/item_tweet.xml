@@ -47,6 +47,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:autoLink="all"
                 android:text="@string/tweet_goes_here"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toStartOf="@+id/tvUserName"
@@ -71,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:onClick="onClickReply"
@@ -79,35 +81,33 @@
                 android:tint="@color/reply_selector"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
-                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+                app:layout_constraintTop_toBottomOf="@+id/ivMedia" />
 
             <ImageButton
                 android:id="@+id/ibRetweet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:padding="5dp"
                 android:src="@drawable/ic_retweet"
                 android:tint="@color/retweet_selector"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/ibReply"
                 app:layout_constraintStart_toEndOf="@+id/tvFavorite"
-                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+                app:layout_constraintTop_toTopOf="@+id/ibReply" />
 
             <ImageButton
                 android:id="@+id/ibFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:padding="5dp"
                 android:src="@drawable/ic_favorite"
                 android:tint="@color/favorite_selector"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/ibReply"
                 app:layout_constraintStart_toEndOf="@+id/ibReply"
-                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+                app:layout_constraintTop_toTopOf="@+id/ibReply" />
 
             <TextView
                 android:id="@+id/tvUserName"
@@ -141,6 +141,19 @@
                 app:layout_constraintBottom_toBottomOf="@+id/ibFavorite"
                 app:layout_constraintStart_toEndOf="@id/ibFavorite"
                 app:layout_constraintTop_toTopOf="@+id/ibFavorite" />
+
+            <ImageView
+                android:id="@+id/ivMedia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBody"
+                app:srcCompat="@drawable/ic_vector_photo" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

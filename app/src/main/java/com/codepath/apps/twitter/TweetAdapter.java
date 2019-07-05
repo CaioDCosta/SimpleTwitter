@@ -22,7 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
 
@@ -54,6 +57,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 		viewHolder.tvTimeStamp.setText(getRelativeTimeAgo(tweet.createdAt));
 		viewHolder.tvUserName.setText(tweet.user.name);
 		Glide.with(context).load(tweet.user.profileImageUrl).bitmapTransform(new CropCircleTransformation(context)).placeholder(R.drawable.placeholder).into(viewHolder.ivProfileImage);
+		if(tweet.mediaUrl != null) {
+			viewHolder.ivMedia.setVisibility(View.VISIBLE);
+			Glide.with(context).load(tweet.mediaUrl+"?format=jpg&name=large").bitmapTransform(new RoundedCornersTransformation(context, 15, 10)).placeholder(R.drawable.ic_vector_photo).into(viewHolder.ivMedia);
+		}
+		else {
+			viewHolder.ivMedia.setVisibility(View.GONE);
+		}
 		viewHolder.tvFavorite.setText(Integer.toString(tweet.numFavorite));
 		viewHolder.tvRetweet.setText(Integer.toString(tweet.numRetweet));
 		viewHolder.favorited = tweet.favorited;
@@ -67,16 +77,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
-		public ImageView ivProfileImage;
-		public TextView tvUserScreenName;
-		public TextView tvBody;
-		public TextView tvTimeStamp;
-		public TextView tvUserName;
-		public TextView tvFavorite;
-		public TextView tvRetweet;
-		public ImageButton ibReply;
-		public ImageButton ibFavorite;
-		public ImageButton ibRetweet;
+		@BindView(R.id.ivProfileImage) public ImageView ivProfileImage;
+		@BindView(R.id.ivMedia) public ImageView ivMedia;
+		@BindView(R.id.tvUserScreenName) public TextView tvUserScreenName;
+		@BindView(R.id.tvBody) public TextView tvBody;
+		@BindView(R.id.tvTimeStamp) public TextView tvTimeStamp;
+		@BindView(R.id.tvUserName) public TextView tvUserName;
+		@BindView(R.id.tvFavorite) public TextView tvFavorite;
+		@BindView(R.id.tvRetweet) public TextView tvRetweet;
+		@BindView(R.id.ibReply) public ImageButton ibReply;
+		@BindView(R.id.ibFavorite) public ImageButton ibFavorite;
+		@BindView(R.id.ibRetweet) public ImageButton ibRetweet;
 		public boolean favorited;
 		public boolean retweeted;
 
@@ -85,16 +96,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
 		public ViewHolder(final Context context, View itemView) {
 			super(itemView);
-			ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-			tvUserScreenName = itemView.findViewById(R.id.tvUserScreenName);
-			tvUserName = itemView.findViewById(R.id.tvUserName);
-			tvBody = itemView.findViewById(R.id.tvBody);
-			tvTimeStamp = itemView.findViewById(R.id.tvTimeStamp);
-			tvFavorite = itemView.findViewById(R.id.tvFavorite);
-			tvRetweet = itemView.findViewById(R.id.tvRetweet);
-			ibReply = itemView.findViewById(R.id.ibReply);
-			ibFavorite = itemView.findViewById(R.id.ibFavorite);
-			ibRetweet = itemView.findViewById(R.id.ibRetweet);
+			ButterKnife.bind(this, itemView);
 
 			ibFavorite.setTag(favorited ? STATE_SELECTED : STATE_NORMAL);
 			ibRetweet.setTag(retweeted ? STATE_SELECTED : STATE_NORMAL);

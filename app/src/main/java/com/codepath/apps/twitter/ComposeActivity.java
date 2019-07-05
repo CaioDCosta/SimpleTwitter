@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.twitter.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -16,22 +17,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class ComposeActivity extends AppCompatActivity {
 
 	private TwitterClient client;
 	public static final int MAX_TWEET_LENGTH = 280;
-	EditText etComposeTweet;
-	TextView tvCharCount;
+	@BindView(R.id.etComposeTweet) EditText etComposeTweet;
+	@BindView(R.id.tvCharacterCount) TextView tvCharCount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_compose);
+		ButterKnife.bind(this);
 		client = TwitterApp.getRestClient(this);
-		etComposeTweet = findViewById(R.id.etComposeTweet);
-		tvCharCount = findViewById(R.id.tvCharacterCount);
 		etComposeTweet.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -64,27 +66,31 @@ public class ComposeActivity extends AppCompatActivity {
 
 
 	public void onClick(View view) {
-		client.sendTweet(etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-				super.onSuccess(statusCode, headers, response);
-				try {
-					Tweet tweet = Tweet.fromJSON(response);
-					Intent data = new Intent();
-					data.putExtra("tweet", Parcels.wrap(tweet));
-					setResult(RESULT_OK, data);
-					finish();
+		if(etComposeTweet.getText().length() <= 280) {
+			client.sendTweet(etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+					super.onSuccess(statusCode, headers, response);
+					try {
+						Tweet tweet = Tweet.fromJSON(response);
+						Intent data = new Intent();
+						data.putExtra("tweet", Parcels.wrap(tweet));
+						setResult(RESULT_OK, data);
+						finish();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-				catch(JSONException e) {
-					e.printStackTrace();
-				}
-			}
 
-			@Override
-			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				throwable.printStackTrace();
-				super.onFailure(statusCode, headers, throwable, errorResponse);
-			}
-		});
+				@Override
+				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					throwable.printStackTrace();
+					super.onFailure(statusCode, headers, throwable, errorResponse);
+				}
+			});
+		}
+		else {
+			Toast.makeText(this, "Message too long!", Toast.LENGTH_SHORT).show();
+		}
 	}
 }
