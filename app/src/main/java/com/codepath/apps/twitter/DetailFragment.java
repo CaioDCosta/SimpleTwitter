@@ -53,7 +53,7 @@ public class DetailFragment extends DialogFragment {
 	public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
-
+		client = TwitterApp.getRestClient(getContext());
 		tweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
 		tvUserScreenName.setText("@" + tweet.user.screenName);
 		tvBody.setText(tweet.body);
@@ -90,12 +90,14 @@ public class DetailFragment extends DialogFragment {
 				if(!tweet.favorited) {
 					tweet.favorited = true;
 					tweet.numFavorite++;
+					ibFavorite.setSelected(true);
 					tvFavorite.setText(Integer.toString(tweet.numFavorite));
 					client.likeTweet(tweet.uid, jsonHttpResponseHandler);
 				}
 				else {
 					tweet.favorited = false;
 					tweet.numFavorite--;
+					ibFavorite.setSelected(false);
 					tvFavorite.setText(Integer.toString(tweet.numFavorite));
 					client.unlikeTweet(tweet.uid, jsonHttpResponseHandler);
 				}
@@ -106,6 +108,7 @@ public class DetailFragment extends DialogFragment {
 			public void onClick(final View v) {
 				if(!tweet.retweeted) {
 					tweet.retweeted = true;
+					ibRetweet.setSelected(true);
 					client.reTweet(tweet.uid, jsonHttpResponseHandler);
 					tweet.numRetweet++;
 					tvRetweet.setText(Integer.toString(tweet.numRetweet));
@@ -113,6 +116,7 @@ public class DetailFragment extends DialogFragment {
 				else {
 					tweet.retweeted = false;
 					tweet.numRetweet--;
+					ibRetweet.setSelected(false);
 					client.unreTweet(tweet.uid, jsonHttpResponseHandler);
 					tvRetweet.setText(Integer.toString(tweet.numRetweet));
 				}
