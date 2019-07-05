@@ -79,7 +79,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 		return mTweets.size();
 	}
 
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+	public class ViewHolder extends RecyclerView.ViewHolder {
 		@BindView(R.id.ivProfileImage) public ImageView ivProfileImage;
 		@BindView(R.id.ivMedia) public ImageView ivMedia;
 		@BindView(R.id.tvUserScreenName) public TextView tvUserScreenName;
@@ -93,12 +93,25 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 		@BindView(R.id.ibRetweet) public ImageButton ibRetweet;
 		Tweet tweet;
 
+		View.OnClickListener onClickProfile = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(context, ProfileActivity.class);
+				intent.putExtra("user", Parcels.wrap(tweet.user));
+				context.startActivity(intent);
+			}
+		};
+
 		public ViewHolder(final Context context, View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 
 			final JsonHttpResponseHandler jsonHttpResponseHandler = new JsonHttpResponseHandler(){
 			};
+
+			ivProfileImage.setOnClickListener(onClickProfile);
+			tvUserName.setOnClickListener(onClickProfile);
+			tvUserScreenName.setOnClickListener(onClickProfile);
 
 			ibReply.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -148,27 +161,29 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
 				}
 			});
-		}
-		@Override
-		public void onClick(View v) {
-			int position = getAdapterPosition();
-			if (position != RecyclerView.NO_POSITION) {
-				// Get tweet at the current position
-				Tweet tweet = mTweets.get(position);
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("tweet", Parcels.wrap(tweet));
-				FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
-				DetailFragment detailFragment = DetailFragment.newInstance();
-				detailFragment.setArguments(bundle);
-				detailFragment.show(fm, "fragment_detail");
-			}
+			itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					int position = getAdapterPosition();
+					if (position != RecyclerView.NO_POSITION) {
+						// Get tweet at the current position
+						Tweet tweet = mTweets.get(position);
+						Bundle bundle = new Bundle();
+						bundle.putParcelable("tweet", Parcels.wrap(tweet));
+						FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+						DetailFragment detailFragment = DetailFragment.newInstance();
+						detailFragment.setArguments(bundle);
+						detailFragment.show(fm, "fragment_detail");
+					}
+				}
+			});
 		}
 	}
 
 
 
 	// getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
-	public String getRelativeTimeAgo(String rawJsonDate) {
+	public static String getRelativeTimeAgo(String rawJsonDate) {
 		String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
 		SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
 		sf.setLenient(true);
