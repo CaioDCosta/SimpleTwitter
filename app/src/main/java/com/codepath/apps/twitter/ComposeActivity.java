@@ -2,6 +2,7 @@ package com.codepath.apps.twitter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +28,9 @@ public class ComposeActivity extends AppCompatActivity {
 	public static final int MAX_TWEET_LENGTH = 280;
 	@BindView(R.id.etComposeTweet) EditText etComposeTweet;
 	@BindView(R.id.tvCharacterCount) TextView tvCharCount;
+	private Tweet tweet;
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,37 +61,64 @@ public class ComposeActivity extends AppCompatActivity {
 				return;
 			}
 		});
-		String name = getIntent().getStringExtra("username");
-		if(name != null) {
-			etComposeTweet.setText(name);
+		Parcelable parcel = getIntent().getParcelableExtra("tweet");
+		if(parcel != null) {
+			tweet = Parcels.unwrap(parcel);
+			etComposeTweet.setText("@" + tweet.user.screenName);
 		}
+
 	}
 
 
 
 	public void onClick(View view) {
 		if(etComposeTweet.getText().length() <= 280) {
-			client.sendTweet(etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
-				@Override
-				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-					super.onSuccess(statusCode, headers, response);
-					try {
-						Tweet tweet = Tweet.fromJSON(response);
-						Intent data = new Intent();
-						data.putExtra("tweet", Parcels.wrap(tweet));
-						setResult(RESULT_OK, data);
-						finish();
-					} catch (JSONException e) {
-						e.printStackTrace();
+			if(tweet != null) {
+				client.sendTweetInReply(tweet.uid, etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+						super.onSuccess(statusCode, headers, response);
+						try {
+							Tweet tweet = Tweet.fromJSON(response);
+							Intent data = new Intent();
+							data.putExtra("tweet", Parcels.wrap(tweet));
+							setResult(RESULT_OK, data);
+							finish();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 					}
-				}
 
-				@Override
-				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-					throwable.printStackTrace();
-					super.onFailure(statusCode, headers, throwable, errorResponse);
-				}
-			});
+					@Override
+					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+						throwable.printStackTrace();
+						super.onFailure(statusCode, headers, throwable, errorResponse);
+					}
+				});
+			}
+			else {
+				client.sendTweet(etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+						super.onSuccess(statusCode, headers, response);
+						try {
+							Tweet tweet = Tweet.fromJSON(response);
+							Intent data = new Intent();
+							data.putExtra("tweet", Parcels.wrap(tweet));
+							setResult(RESULT_OK, data);
+							finish();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+						throwable.printStackTrace();
+						super.onFailure(statusCode, headers, throwable, errorResponse);
+					}
+				});
+			}
 		}
 		else {
 			Toast.makeText(this, "Message too long!", Toast.LENGTH_SHORT).show();

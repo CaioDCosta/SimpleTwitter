@@ -24,7 +24,12 @@ public class Tweet {
 	// Deserialize the JSON
 	public static Tweet fromJSON(JSONObject jsonObject) throws JSONException {
 		Tweet tweet = new Tweet();
-		tweet.body = jsonObject.getString("text");
+		if(jsonObject.has("full_text")) {
+			tweet.body = jsonObject.getString("full_text");
+		}
+		else {
+			tweet.body = jsonObject.getString("text");
+		}
 		tweet.uid = jsonObject.getLong("id");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
@@ -32,8 +37,11 @@ public class Tweet {
 		tweet.numFavorite = jsonObject.getInt("favorite_count");
 		tweet.favorited = jsonObject.getBoolean("favorited");
 		tweet.retweeted = jsonObject.getBoolean("retweeted");
-		JSONArray media = jsonObject.getJSONObject("entities").getJSONArray("media");
-		if(media.length() > 0) tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");
+		if(jsonObject.has("extended_entities") && jsonObject.getJSONObject("extended_entities").has("media")) {
+			JSONArray media = jsonObject.getJSONObject("extended_entities").getJSONArray("media");
+			if (media.length() > 0 && media.getJSONObject(0).getString("type").equals("photo"))
+				tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");
+		}
 		return tweet;
 	}
 }

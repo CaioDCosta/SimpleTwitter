@@ -1,7 +1,6 @@
 package com.codepath.apps.twitter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.github.scribejava.apis.TwitterApi;
@@ -48,9 +47,8 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 200);
 		params.put("since_id", 1);
+		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
-
-		Log.d("TwitterClient", String.format("%s %s",client.toString(), params.toString()));
 	}
 
 	public void getScrolledTimeline(long max_id, AsyncHttpResponseHandler handler) {
@@ -59,6 +57,7 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 200);
 		params.put("max_id", max_id);
+		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
 	}
 
@@ -70,31 +69,36 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, handler);
 	}
 
-	public void reTweet(long id, AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/retweet/:id.json");
+	public void sendTweetInReply(long id, String message, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
-		params.put("id", id);
+		params.put("status", message);
+		params.put("in_reply_to_status_id", id);
 		client.post(apiUrl, params, handler);
+	}
+
+	public void reTweet(long id, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl(String.format("statuses/retweet/%s.json", Long.toString(id)));
+		// Can specify query string params directly or through RequestParams.
+		client.post(apiUrl, handler);
 	}
 
 	public void unreTweet(long id, AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/unretweet/:id.json");
+		String apiUrl = getApiUrl(String.format("statuses/unretweet/%s.json", Long.toString(id)));
 		// Can specify query string params directly or through RequestParams.
-		RequestParams params = new RequestParams();
-		params.put("id", id);
-		client.post(apiUrl, params, handler);
+		client.post(apiUrl, handler);
 	}
 
 	public void likeTweet(long id, AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/favorites/create.json");
+		String apiUrl = getApiUrl("favorites/create.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("id", id);
 		client.post(apiUrl, params, handler);
 	}
 	public void unlikeTweet(long id, AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/favorites/destroy.json");
+		String apiUrl = getApiUrl("favorites/destroy.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("id", id);
