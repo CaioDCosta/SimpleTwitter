@@ -10,6 +10,11 @@ public class Tweet {
 	public long uid;
 	public String createdAt;
 	public User user;
+	public int numFavorite;
+	public int numRetweet;
+	public int numReply;
+	public boolean favorited;
+	public boolean retweeted;
 
 	public Tweet() {
 	}
@@ -21,6 +26,10 @@ public class Tweet {
 		tweet.uid = jsonObject.getLong("id");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+		tweet.numRetweet = jsonObject.getInt("retweet_count");
+		tweet.numFavorite = jsonObject.getInt("favorite_count");
+		tweet.favorited = jsonObject.getBoolean("favorited");
+		tweet.retweeted = jsonObject.getBoolean("retweeted");
 		return tweet;
 	}
 }

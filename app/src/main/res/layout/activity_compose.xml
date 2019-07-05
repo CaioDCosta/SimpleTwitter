@@ -25,7 +25,7 @@
         android:background="@null"
         android:ems="10"
         android:gravity="top"
-        android:hint="@string/enter_tweet_here"
+        android:hint="@string/what_s_happening"
         android:inputType="textLongMessage|textAutoCorrect|textMultiLine|textPersonName"
         android:singleLine="false"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,9 +36,12 @@
     <Button
         android:id="@+id/btnPostTweet"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/selector_send_tweet"
         android:onClick="onClick"
         android:text="@string/tweet"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/etComposeTweet"
         app:layout_constraintTop_toBottomOf="@+id/etComposeTweet" />
 
@@ -47,7 +50,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="280"
+        android:text="@string/_280"
+        android:textColor="@color/medium_green"
         app:layout_constraintBottom_toBottomOf="@+id/btnPostTweet"
         app:layout_constraintEnd_toStartOf="@+id/btnPostTweet"
         app:layout_constraintTop_toBottomOf="@+id/etComposeTweet" />

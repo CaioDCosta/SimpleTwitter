@@ -55,6 +55,10 @@ public class ComposeActivity extends AppCompatActivity {
 				return;
 			}
 		});
+		String name = getIntent().getStringExtra("username");
+		if(name != null) {
+			etComposeTweet.setText(name);
+		}
 	}
 
 

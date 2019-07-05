@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        app:cardBackgroundColor="#B3E5FC"
+        app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="8dp"
         app:cardElevation="5dp"
         app:cardMaxElevation="5dp">
@@ -32,15 +32,14 @@
                 app:srcCompat="@android:color/black" />
 
             <TextView
-                android:id="@+id/tvUserName"
-                android:layout_width="0dp"
+                android:id="@+id/tvUserScreenName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
                 android:text="@string/handle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintEnd_toStartOf="@+id/tvTimeStamp"
-                app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintStart_toEndOf="@+id/tvUserName"
                 app:layout_constraintTop_toTopOf="@+id/ivProfileImage" />
 
             <TextView
@@ -48,20 +47,100 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/tweet_goes_here"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toStartOf="@+id/tvUserName"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
+                app:layout_constraintTop_toBottomOf="@+id/tvUserScreenName" />
 
             <TextView
                 android:id="@+id/tvTimeStamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/time"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvUserName" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/tvUserScreenName"
+                app:layout_constraintTop_toTopOf="@+id/tvUserScreenName" />
+
+            <ImageButton
+                android:id="@+id/ibReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:onClick="onClickReply"
+                android:padding="5dp"
+                android:src="@drawable/ic_reply"
+                android:tint="@color/reply_selector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+
+            <ImageButton
+                android:id="@+id/ibRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:padding="5dp"
+                android:src="@drawable/ic_retweet"
+                android:tint="@color/retweet_selector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tvFavorite"
+                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+
+            <ImageButton
+                android:id="@+id/ibFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:padding="5dp"
+                android:src="@drawable/ic_favorite"
+                android:tint="@color/favorite_selector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ibReply"
+                app:layout_constraintTop_toBottomOf="@+id/tvBody" />
+
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="30"
+                app:layout_constraintBottom_toBottomOf="@+id/ibRetweet"
+                app:layout_constraintStart_toEndOf="@+id/ibRetweet"
+                app:layout_constraintTop_toTopOf="@+id/ibRetweet"
+                app:layout_constraintVertical_bias=".5" />
+
+            <TextView
+                android:id="@+id/tvFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="20"
+                app:layout_constraintBottom_toBottomOf="@+id/ibFavorite"
+                app:layout_constraintStart_toEndOf="@id/ibFavorite"
+                app:layout_constraintTop_toTopOf="@+id/ibFavorite" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

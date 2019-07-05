@@ -12,5 +12,7 @@
     <string name="tweet_goes_here">Tweet goes here</string>
     <string name="time">time</string>
     <string name="handle">\@Handle</string>
+    <string name="_280">280</string>
+    <string name="what_s_happening">What\'s happening?</string>
 
 </resources>
