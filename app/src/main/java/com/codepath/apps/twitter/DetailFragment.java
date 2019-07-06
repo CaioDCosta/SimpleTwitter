@@ -1,9 +1,10 @@
 package com.codepath.apps.twitter;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,9 +79,12 @@ public class DetailFragment extends DialogFragment {
 		ibReply.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(view.getContext(), ComposeActivity.class);
-				intent.putExtra("tweet", Parcels.wrap(tweet));
-				view.getContext().startActivity(intent);
+				Bundle bundle = new Bundle();
+				bundle.putParcelable("tweet", Parcels.wrap(tweet));
+				FragmentManager fm = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+				ComposeFragment composeFragment = ComposeFragment.newInstance();
+				composeFragment.setArguments(bundle);
+				composeFragment.show(fm, "fragment_compose");
 			}
 		});
 

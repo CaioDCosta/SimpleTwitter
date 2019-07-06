@@ -116,9 +116,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 			ibReply.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(context, ComposeActivity.class);
-					intent.putExtra("tweet", Parcels.wrap(tweet));
-					context.startActivity(intent);
+					Bundle bundle = new Bundle();
+					bundle.putParcelable("tweet", Parcels.wrap(tweet));
+					FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+					ComposeFragment composeFragment = ComposeFragment.newInstance();
+					composeFragment.setArguments(bundle);
+					composeFragment.show(fm, "fragment_compose");
 				}
 			});
 

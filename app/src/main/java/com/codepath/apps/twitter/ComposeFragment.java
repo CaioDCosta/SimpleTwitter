@@ -1,12 +1,14 @@
 package com.codepath.apps.twitter;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,22 +24,31 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
-public class ComposeActivity extends AppCompatActivity {
+public class ComposeFragment extends DialogFragment {
 
 	private TwitterClient client;
 	public static final int MAX_TWEET_LENGTH = 280;
 	@BindView(R.id.etComposeTweet) EditText etComposeTweet;
 	@BindView(R.id.tvCharacterCount) TextView tvCharCount;
+	@BindView(R.id.btnPostTweet) Button btnPostTweet;
 	private Tweet tweet;
 
+	public static ComposeFragment newInstance() {
+		return new ComposeFragment();
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_compose, container);
+	}
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_compose);
-		ButterKnife.bind(this);
-		client = TwitterApp.getRestClient(this);
+		ButterKnife.bind(this, view);
+		client = TwitterApp.getRestClient(getContext());
 		etComposeTweet.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -61,17 +72,34 @@ public class ComposeActivity extends AppCompatActivity {
 				return;
 			}
 		});
-		Parcelable parcel = getIntent().getParcelableExtra("tweet");
-		if(parcel != null) {
-			tweet = Parcels.unwrap(parcel);
+		if(getArguments() != null) {
+			tweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
 			etComposeTweet.setText("@" + tweet.user.screenName);
 		}
 
+		btnPostTweet.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onSendTweet();
+			}
+		});
+
 	}
 
+	public interface ComposeDialogListener {
+		void onFinishComposeDialog(Tweet tweet);
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+		params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+		params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+		getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+	}
 
-	public void onClick(View view) {
+	public void onSendTweet() {
 		if(etComposeTweet.getText().length() <= 280) {
 			if(tweet != null) {
 				client.sendTweetInReply(tweet.uid, etComposeTweet.getText().toString(), new JsonHttpResponseHandler() {
@@ -80,10 +108,9 @@ public class ComposeActivity extends AppCompatActivity {
 						super.onSuccess(statusCode, headers, response);
 						try {
 							Tweet tweet = Tweet.fromJSON(response);
-							Intent data = new Intent();
-							data.putExtra("tweet", Parcels.wrap(tweet));
-							setResult(RESULT_OK, data);
-							finish();
+							ComposeDialogListener listener = (ComposeDialogListener) getActivity();
+							listener.onFinishComposeDialog(tweet);
+							dismiss();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -103,10 +130,9 @@ public class ComposeActivity extends AppCompatActivity {
 						super.onSuccess(statusCode, headers, response);
 						try {
 							Tweet tweet = Tweet.fromJSON(response);
-							Intent data = new Intent();
-							data.putExtra("tweet", Parcels.wrap(tweet));
-							setResult(RESULT_OK, data);
-							finish();
+							ComposeDialogListener listener = (ComposeDialogListener) getActivity();
+							listener.onFinishComposeDialog(tweet);
+							dismiss();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -117,11 +143,12 @@ public class ComposeActivity extends AppCompatActivity {
 						throwable.printStackTrace();
 						super.onFailure(statusCode, headers, throwable, errorResponse);
 					}
+
 				});
 			}
 		}
 		else {
-			Toast.makeText(this, "Message too long!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getContext(), "Message too long!", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

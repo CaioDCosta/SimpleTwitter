@@ -1,9 +1,8 @@
 package com.codepath.apps.twitter;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +19,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeFragment.ComposeDialogListener {
 
 	private TwitterClient client;
 	private TweetAdapter tweetAdapter;
@@ -99,20 +97,17 @@ public class TimelineActivity extends AppCompatActivity {
 				R.color.twitter_blue_50);
 	}
 
-	public void onComposeAction() {
-		Intent intent = new Intent(this, ComposeActivity.class);
-		startActivityForResult(intent, REQUEST_CODE);
+	@Override
+	public void onFinishComposeDialog(Tweet tweet) {
+		tweets.add(0, tweet);
+		tweetAdapter.notifyItemInserted(0);
+		rvTweets.scrollToPosition(0);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-			Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
-			tweets.add(0, tweet);
-			tweetAdapter.notifyItemInserted(0);
-			rvTweets.scrollToPosition(0);
-		}
+	public void onComposeAction() {
+		FragmentManager fm = getSupportFragmentManager();
+		ComposeFragment composeFragment = ComposeFragment.newInstance();
+		composeFragment.show(fm, "fragment_compose");
 	}
 
 	private void fetchTimeline() {

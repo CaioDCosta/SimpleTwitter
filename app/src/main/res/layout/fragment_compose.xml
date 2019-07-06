@@ -31,7 +31,6 @@
         android:layout_height="0dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/selector_send_tweet"
-        android:onClick="onClick"
         android:text="@string/tweet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/etComposeTweet"
